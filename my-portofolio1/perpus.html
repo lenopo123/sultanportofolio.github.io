@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Management System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f6fa;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .navbar h1 {
+            font-size: 1.8rem;
+        }
+
+        .user-info {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid #ddd;
+        }
+
+        .tab {
+            padding: 1rem 2rem;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-size: 1rem;
+            color: #666;
+            transition: all 0.3s;
+        }
+
+        .tab:hover {
+            color: #667eea;
+        }
+
+        .tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .stat-card .icon {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card h3 {
+            font-size: 2rem;
+            color: #667eea;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card p {
+            color: #666;
+        }
+
+        .books-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .book-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .book-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .book-cover {
+            width: 100%;
+            height: 300px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 5rem;
+        }
+
+        .book-info {
+            padding: 1.5rem;
+        }
+
+        .book-info h3 {
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .book-info .author {
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+
+        .book-info .category {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .book-status {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+        }
+
+        .status-badge {
+            padding: 5px 15px;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .status-available {
+            background: #2ecc71;
+            color: white;
+        }
+
+        .status-borrowed {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #764ba2;
+        }
+
+        .btn-success {
+            background: #2ecc71;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #27ae60;
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+
+        .borrowed-list {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .borrowed-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .borrowed-item:last-child {
+            border-bottom: none;
+        }
+
+        .borrowed-info h4 {
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .borrowed-info p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .due-date {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+
+        .search-box {
+            margin-bottom: 2rem;
+        }
+
+        .search-box input {
+            width: 100%;
+            max-width: 500px;
+            padding: 12px 20px;
+            border: 2px solid #ddd;
+            border-radius: 25px;
+            font-size: 1rem;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 10px 20px;
+            border: 2px solid #ddd;
+            background: white;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #999;
+        }
+
+        @media (max-width: 768px) {
+            .tabs {
+                overflow-x: auto;
+            }
+
+            .tab {
+                white-space: nowrap;
+            }
+
+            .books-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            }
+
+            .borrowed-item {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <h1>📚 Library System</h1>
+        <div class="user-info">
+            <span>Selamat datang, User</span>
+            <button class="btn btn-primary" onclick="alert('Logout berhasil!')">Logout</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('dashboard')">Dashboard</button>
+            <button class="tab" onclick="switchTab('books')">Katalog Buku</button>
+            <button class="tab" onclick="switchTab('borrowed')">Buku Dipinjam</button>
+        </div>
+
+        <!-- Dashboard Tab -->
+        <div id="dashboard" class="tab-content active">
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="icon">📚</div>
+                    <h3 id="totalBooks">0</h3>
+                    <p>Total Buku</p>
+                </div>
+                <div class="stat-card">
+                    <div class="icon">✅</div>
+                    <h3 id="availableBooks">0</h3>
+                    <p>Buku Tersedia</p>
+                </div>
+                <div class="stat-card">
+                    <div class="icon">📖</div>
+                    <h3 id="borrowedBooksCount">0</h3>
+                    <p>Buku Dipinjam</p>
+                </div>
+                <div class="stat-card">
+                    <div class="icon">👥</div>
+                    <h3>150</h3>
+                    <p>Anggota Aktif</p>
+                </div>
+            </div>
+
+            <h2 style="margin-bottom: 1.5rem; color: #333;">Buku Populer</h2>
+            <div class="books-grid" id="popularBooks"></div>
+        </div>
+
+        <!-- Books Catalog Tab -->
+        <div id="books" class="tab-content">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="🔍 Cari buku berdasarkan judul atau penulis..." onkeyup="searchBooks()">
+            </div>
+
+            <div class="filter-buttons" id="filterButtons">
+                <button class="filter-btn active" onclick="filterBooks('all')">Semua</button>
+                <button class="filter-btn" onclick="filterBooks('Fiksi')">Fiksi</button>
+                <button class="filter-btn" onclick="filterBooks('Non-Fiksi')">Non-Fiksi</button>
+                <button class="filter-btn" onclick="filterBooks('Teknologi')">Teknologi</button>
+                <button class="filter-btn" onclick="filterBooks('Sejarah')">Sejarah</button>
+            </div>
+
+            <div class="books-grid" id="booksGrid"></div>
+        </div>
+
+        <!-- Borrowed Books Tab -->
+        <div id="borrowed" class="tab-content">
+            <h2 style="margin-bottom: 1.5rem; color: #333;">Buku yang Sedang Dipinjam</h2>
+            <div class="borrowed-list" id="borrowedList"></div>
+        </div>
+    </div>
+
+    <script>
+        const books = [
+            { id: 1, title: 'Pemrograman Web', author: 'John Doe', category: 'Teknologi', icon: '💻', available: true },
+            { id: 2, title: 'Belajar JavaScript', author: 'Jane Smith', category: 'Teknologi', icon: '📱', available: true },
+            { id: 3, title: 'Sejarah Indonesia', author: 'Ahmad Rahman', category: 'Sejarah', icon: '🏛️', available: false },
+            { id: 4, title: 'Novel Laskar Pelangi', author: 'Andrea Hirata', category: 'Fiksi', icon: '🌈', available: true },
+            { id: 5, title: 'Filosofi Kopi', author: 'Dee Lestari', category: 'Fiksi', icon: '☕', available: true },
+            { id: 6, title: 'Database Design', author: 'Robert Wilson', category: 'Teknologi', icon: '🗄️', available: false },
+            { id: 7, title: 'Psikologi Modern', author: 'Sarah Johnson', category: 'Non-Fiksi', icon: '🧠', available: true },
+            { id: 8, title: 'Seni Hidup Minimalis', author: 'Lisa Anderson', category: 'Non-Fiksi', icon: '🎯', available: true },
+            { id: 9, title: 'Perang Dunia II', author: 'Michael Brown', category: 'Sejarah', icon: '⚔️', available: true }
+        ];
+
+        let borrowedBooks = [
+            { bookId: 3, dueDate: '2025-10-10', borrowDate: '2025-09-26' },
+            { bookId: 6, dueDate: '2025-10-15', borrowDate: '2025-10-01' }
+        ];
+
+        let currentFilter = 'all';
+
+        function updateStats() {
+            document.getElementById('totalBooks').textContent = books.length;
+            document.getElementById('availableBooks').textContent = books.filter(b => b.available).length;
+            document.getElementById('borrowedBooksCount').textContent = borrowedBooks.length;
+        }
+
+        function renderBooks(booksToRender, containerId) {
+            const grid = document.getElementById(containerId);
+            grid.innerHTML = booksToRender.map(book => `
+                <div class="book-card">
+                    <div class="book-cover">${book.icon}</div>
+                    <div class="book-info">
+                        <h3>${book.title}</h3>
+                        <p class="author">oleh ${book.author}</p>
+                        <span class="category">${book.category}</span>
+                        <div class="book-status">
+                            <span class="status-badge ${book.available ? 'status-available' : 'status-borrowed'}">
+                                ${book.available ? 'Tersedia' : 'Dipinjam'}
+                            </span>
+                            ${book.available ? 
+                                `<button class="btn btn-primary" onclick="borrowBook(${book.id})">Pinjam</button>` : 
+                                '<button class="btn btn-primary" disabled>Tidak Tersedia</button>'}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+
+            if (tabName === 'dashboard') {
+                renderBooks(books.slice(0, 6), 'popularBooks');
+            } else if (tabName === 'books') {
+                filterBooks(currentFilter);
+            } else if (tabName === 'borrowed') {
+                renderBorrowedBooks();
+            }
+        }
+
+        function filterBooks(category) {
+            currentFilter = category;
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            const filtered = category === 'all' ? books : books.filter(b => b.category === category);
+            renderBooks(filtered, 'booksGrid');
+        }
+
+        function searchBooks() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = books.filter(b => 
+                b.title.toLowerCase().includes(search) || 
+                b.author.toLowerCase().includes(search)
+            );
+            renderBooks(filtered, 'booksGrid');
+        }
+
+        function borrowBook(bookId) {
+            const book = books.find(b => b.id === bookId);
+            if (!book.available) {
+                alert('Buku tidak tersedia!');
+                return;
+            }
+
+            const dueDate = new Date();
+            dueDate.setDate(dueDate.getDate() + 14);
+
+            borrowedBooks.push({
+                bookId: bookId,
+                borrowDate: new Date().toISOString().split('T')[0],
+                dueDate: dueDate.toISOString().split('T')[0]
+            });
+
+            book.available = false;
+            updateStats();
+            alert(`Buku "${book.title}" berhasil dipinjam!\nJatuh tempo: ${dueDate.toLocaleDateString('id-ID')}`);
+            
+            filterBooks(currentFilter);
+        }
+
+        function returnBook(bookId) {
+            const book = books.find(b => b.id === bookId);
+            book.available = true;
+            borrowedBooks = borrowedBooks.filter(b => b.bookId !== bookId);
+            
+            updateStats();
+            alert(`Buku "${book.title}" berhasil dikembalikan!`);
+            renderBorrowedBooks();
+        }
+
+        function renderBorrowedBooks() {
+            const container = document.getElementById('borrowedList');
+            
+            if (borrowedBooks.length === 0) {
+                container.innerHTML = '<div class="empty-state"><h3>Tidak ada buku yang dipinjam</h3><p>Silakan pinjam buku dari katalog</p></div>';
+                return;
+            }
+
+            container.innerHTML = borrowedBooks.map(item => {
+                const book = books.find(b => b.id === item.bookId);
+                const dueDate = new Date(item.dueDate);
+                const today = new Date();
+                const daysLeft = Math.ceil((dueDate - today) / (1000 * 60 * 60 * 24));
+                
+                return `
+                    <div class="borrowed-item">
+                        <div class="borrowed-info">
+                            <h4>${book.icon} ${book.title}</h4>
+                            <p>Penulis: ${book.author}</p>
+                            <p>Tanggal Pinjam: ${new Date(item.borrowDate).toLocaleDateString('id-ID')}</p>
+                            <p class="due-date">Jatuh Tempo: ${dueDate.toLocaleDateString('id-ID')} (${daysLeft} hari lagi)</p>
+                        </div>
+                        <button class="btn btn-success" onclick="returnBook(${book.id})">Kembalikan</button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Initialize
+        updateStats();
+        renderBooks(books.slice(0, 6), 'popularBooks');
+        renderBooks(books, 'booksGrid');
+    </script>
+</body>
+</html>

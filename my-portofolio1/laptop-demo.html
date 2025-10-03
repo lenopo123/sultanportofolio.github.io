@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laptop Management System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f6fa;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .navbar h1 {
+            font-size: 1.5rem;
+        }
+
+        .navbar .user {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .header h2 {
+            color: #333;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.3s;
+        }
+
+        .btn:hover {
+            background: #764ba2;
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+        }
+
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+
+        .btn-edit {
+            background: #f39c12;
+        }
+
+        .btn-edit:hover {
+            background: #e67e22;
+        }
+
+        .search-box {
+            margin-bottom: 1.5rem;
+        }
+
+        .search-box input {
+            width: 100%;
+            max-width: 400px;
+            padding: 10px 15px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .table-container {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background: #f8f9fa;
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .actions button {
+            padding: 5px 15px;
+            font-size: 0.9rem;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .modal-content h3 {
+            margin-bottom: 1.5rem;
+            color: #667eea;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .modal-actions button {
+            flex: 1;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            font-size: 2rem;
+            color: #667eea;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card p {
+            color: #666;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 1rem;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+
+            .actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <h1>💻 Laptop Management System</h1>
+        <div class="user">
+            <span>Admin</span>
+            <button class="btn" onclick="alert('Logout berhasil!')">Logout</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="stats">
+            <div class="stat-card">
+                <h3 id="totalLaptops">0</h3>
+                <p>Total Laptop</p>
+            </div>
+            <div class="stat-card">
+                <h3 id="availableLaptops">0</h3>
+                <p>Tersedia</p>
+            </div>
+            <div class="stat-card">
+                <h3 id="usedLaptops">0</h3>
+                <p>Digunakan</p>
+            </div>
+        </div>
+
+        <div class="header">
+            <h2>Daftar Laptop</h2>
+            <button class="btn" onclick="openAddModal()">+ Tambah Laptop</button>
+        </div>
+
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="🔍 Cari laptop berdasarkan merk, model, atau processor..." onkeyup="searchLaptop()">
+        </div>
+
+        <div class="table-container">
+            <table id="laptopTable">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Merk</th>
+                        <th>Model</th>
+                        <th>Processor</th>
+                        <th>RAM</th>
+                        <th>Storage</th>
+                        <th>Status</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody id="laptopBody">
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Modal Add/Edit -->
+    <div id="laptopModal" class="modal">
+        <div class="modal-content">
+            <h3 id="modalTitle">Tambah Laptop</h3>
+            <form id="laptopForm" onsubmit="saveLaptop(event)">
+                <input type="hidden" id="laptopId">
+                
+                <div class="form-group">
+                    <label>Merk</label>
+                    <input type="text" id="merk" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Model</label>
+                    <input type="text" id="model" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Processor</label>
+                    <input type="text" id="processor" required>
+                </div>
+
+                <div class="form-group">
+                    <label>RAM</label>
+                    <input type="text" id="ram" placeholder="Contoh: 8GB" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Storage</label>
+                    <input type="text" id="storage" placeholder="Contoh: 512GB SSD" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Status</label>
+                    <select id="status" required>
+                        <option value="Tersedia">Tersedia</option>
+                        <option value="Digunakan">Digunakan</option>
+                        <option value="Maintenance">Maintenance</option>
+                    </select>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="submit" class="btn">Simpan</button>
+                    <button type="button" class="btn btn-danger" onclick="closeModal()">Batal</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let laptops = [
+            { id: 1, merk: 'Asus', model: 'ROG Strix G15', processor: 'Intel Core i7-11800H', ram: '16GB', storage: '512GB SSD', status: 'Tersedia' },
+            { id: 2, merk: 'Lenovo', model: 'ThinkPad X1 Carbon', processor: 'Intel Core i5-1135G7', ram: '8GB', storage: '256GB SSD', status: 'Digunakan' },
+            { id: 3, merk: 'HP', model: 'Pavilion 14', processor: 'AMD Ryzen 5 5500U', ram: '8GB', storage: '512GB SSD', status: 'Tersedia' },
+            { id: 4, merk: 'Dell', model: 'XPS 13', processor: 'Intel Core i7-1165G7', ram: '16GB', storage: '1TB SSD', status: 'Maintenance' },
+            { id: 5, merk: 'Acer', model: 'Swift 3', processor: 'Intel Core i5-1135G7', ram: '8GB', storage: '512GB SSD', status: 'Tersedia' }
+        ];
+        let nextId = 6;
+
+        function renderTable() {
+            const tbody = document.getElementById('laptopBody');
+            tbody.innerHTML = '';
+
+            laptops.forEach((laptop, index) => {
+                const row = `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${laptop.merk}</td>
+                        <td>${laptop.model}</td>
+                        <td>${laptop.processor}</td>
+                        <td>${laptop.ram}</td>
+                        <td>${laptop.storage}</td>
+                        <td><span style="padding: 5px 10px; border-radius: 5px; background: ${laptop.status === 'Tersedia' ? '#2ecc71' : laptop.status === 'Digunakan' ? '#e74c3c' : '#f39c12'}; color: white; font-size: 0.9rem;">${laptop.status}</span></td>
+                        <td>
+                            <div class="actions">
+                                <button class="btn btn-edit" onclick="editLaptop(${laptop.id})">Edit</button>
+                                <button class="btn btn-danger" onclick="deleteLaptop(${laptop.id})">Hapus</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+
+            updateStats();
+        }
+
+        function updateStats() {
+            document.getElementById('totalLaptops').textContent = laptops.length;
+            document.getElementById('availableLaptops').textContent = laptops.filter(l => l.status === 'Tersedia').length;
+            document.getElementById('usedLaptops').textContent = laptops.filter(l => l.status === 'Digunakan').length;
+        }
+
+        function openAddModal() {
+            document.getElementById('modalTitle').textContent = 'Tambah Laptop';
+            document.getElementById('laptopForm').reset();
+            document.getElementById('laptopId').value = '';
+            document.getElementById('laptopModal').classList.add('active');
+        }
+
+        function editLaptop(id) {
+            const laptop = laptops.find(l => l.id === id);
+            if (laptop) {
+                document.getElementById('modalTitle').textContent = 'Edit Laptop';
+                document.getElementById('laptopId').value = laptop.id;
+                document.getElementById('merk').value = laptop.merk;
+                document.getElementById('model').value = laptop.model;
+                document.getElementById('processor').value = laptop.processor;
+                document.getElementById('ram').value = laptop.ram;
+                document.getElementById('storage').value = laptop.storage;
+                document.getElementById('status').value = laptop.status;
+                document.getElementById('laptopModal').classList.add('active');
+            }
+        }
+
+        function saveLaptop(e) {
+            e.preventDefault();
+            
+            const id = document.getElementById('laptopId').value;
+            const laptop = {
+                merk: document.getElementById('merk').value,
+                model: document.getElementById('model').value,
+                processor: document.getElementById('processor').value,
+                ram: document.getElementById('ram').value,
+                storage: document.getElementById('storage').value,
+                status: document.getElementById('status').value
+            };
+
+            if (id) {
+                const index = laptops.findIndex(l => l.id == id);
+                laptops[index] = { ...laptop, id: parseInt(id) };
+                alert('Laptop berhasil diupdate!');
+            } else {
+                laptops.push({ ...laptop, id: nextId++ });
+                alert('Laptop berhasil ditambahkan!');
+            }
+
+            closeModal();
+            renderTable();
+        }
+
+        function deleteLaptop(id) {
+            if (confirm('Yakin ingin menghapus laptop ini?')) {
+                laptops = laptops.filter(l => l.id !== id);
+                renderTable();
+                alert('Laptop berhasil dihapus!');
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('laptopModal').classList.remove('active');
+        }
+
+        function searchLaptop() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = laptops.filter(l => 
+                l.merk.toLowerCase().includes(search) ||
+                l.model.toLowerCase().includes(search) ||
+                l.processor.toLowerCase().includes(search)
+            );
+
+            const tbody = document.getElementById('laptopBody');
+            tbody.innerHTML = '';
+
+            filtered.forEach((laptop, index) => {
+                const row = `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${laptop.merk}</td>
+                        <td>${laptop.model}</td>
+                        <td>${laptop.processor}</td>
+                        <td>${laptop.ram}</td>
+                        <td>${laptop.storage}</td>
+                        <td><span style="padding: 5px 10px; border-radius: 5px; background: ${laptop.status === 'Tersedia' ? '#2ecc71' : laptop.status === 'Digunakan' ? '#e74c3c' : '#f39c12'}; color: white; font-size: 0.9rem;">${laptop.status}</span></td>
+                        <td>
+                            <div class="actions">
+                                <button class="btn btn-edit" onclick="editLaptop(${laptop.id})">Edit</button>
+                                <button class="btn btn-danger" onclick="deleteLaptop(${laptop.id})">Hapus</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        }
+
+        // Click outside modal to close
+        document.getElementById('laptopModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // Initial render
+        renderTable();
+    </script>
+</body>
+</html>
